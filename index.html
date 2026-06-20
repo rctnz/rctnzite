@@ -53,6 +53,14 @@
     background:radial-gradient(600px circle at var(--mx,50%) var(--my,-20%),
       rgba(63,214,255,0.08), transparent 55%);
   }
+  /* Animated floating orbs */
+  .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(90px);opacity:0.13;}
+  .orb1{width:500px;height:500px;background:var(--cyan);top:-15%;left:-10%;animation:orb1move 24s ease-in-out infinite alternate;}
+  .orb2{width:400px;height:400px;background:var(--blue);bottom:-10%;right:-8%;animation:orb2move 19s ease-in-out infinite alternate;}
+  .orb3{width:300px;height:300px;background:var(--cyan-soft);top:35%;left:50%;animation:orb3move 28s ease-in-out infinite alternate;}
+  @keyframes orb1move{0%{transform:translate(0,0);}25%{transform:translate(80px,60px);}50%{transform:translate(-40px,120px);}75%{transform:translate(120px,40px);}100%{transform:translate(60px,-60px);}}
+  @keyframes orb2move{0%{transform:translate(0,0);}30%{transform:translate(-90px,-70px);}60%{transform:translate(50px,-130px);}100%{transform:translate(-60px,80px);}}
+  @keyframes orb3move{0%{transform:translate(0,0);}20%{transform:translate(-70px,90px);}50%{transform:translate(100px,-60px);}80%{transform:translate(-50px,-80px);}100%{transform:translate(80px,50px);}}
   ::selection{background:var(--cyan); color:#04080d;}
 
   nav{
@@ -269,14 +277,14 @@
   .credential-link:hover{opacity:0.7;}
 
   /* Carousel / Gallery */
-  .carousel-wrap{position:relative;}
+  .carousel-wrap{position:relative; padding:32px 0 48px; margin:-32px 0 -48px;}
   .carousel{
     display:flex;
     gap:20px;
     overflow-x:auto;
-    overflow-y:hidden;
+    overflow-y:visible;
     scroll-snap-type:x mandatory;
-    padding-bottom:18px;
+    padding:32px 0 48px;
     scrollbar-width:none;
     touch-action:pan-x;
   }
@@ -286,26 +294,38 @@
     width:min(297px, 70vw);
     scroll-snap-align:start;
     border-radius:20px;
-    overflow:hidden;
+    overflow:visible;
     border:1px solid var(--line);
     background:var(--card);
     position:relative;
-    opacity:0;
-    transform:translateY(28px);
-    transition:opacity .6s ease, transform .6s ease;
     cursor:pointer;
     touch-action:pan-x;
+    opacity:0;
+    transform:translateY(28px) scale(0.95);
+    transition:opacity 0.2s ease, transform 0.2s cubic-bezier(.21,.6,.35,1), box-shadow 0.2s ease, border-color 0.2s ease;
   }
-  .slide.in{opacity:1; transform:translateY(0);}
+  .slide.in{opacity:1; transform:translateY(0) scale(1);}
+  .slide:hover{
+    transform:translateY(-8px) scale(1.06);
+    box-shadow:0 12px 28px -8px rgba(63,214,255,0.12);
+    border-color:rgba(63,214,255,0.5);
+    z-index:2;
+  }
+  .slide-img-wrap{
+    border-radius:20px;
+    overflow:hidden;
+    width:100%;
+    background:var(--card);
+  }
   .slide img{
     width:100%;
     height:420px;
     object-fit:cover;
     display:block;
     filter:saturate(0.9) brightness(0.95);
-    transition:transform .6s ease, filter .6s ease;
+    border-radius:0 0 20px 20px;
   }
-  .slide:hover img{transform:scale(1.05); filter:saturate(1.1) brightness(1);}
+  .slide:hover img{transform:none; filter:saturate(0.9) brightness(0.95);}
 
   /* Lightbox */
   .lightbox-overlay{
@@ -318,6 +338,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    padding-top:70px;
     backdrop-filter:blur(8px);
     cursor:zoom-out;
     transition:opacity .4s ease;
@@ -327,8 +348,9 @@
     pointer-events:all;
   }
   .lightbox-overlay img{
-    max-width:min(794px,92vw);
-    max-height:92vh;
+    max-width:min(520px,78vw);
+    max-height:78vh;
+    margin-top:20px;
     border-radius:16px;
     border:1px solid var(--line);
     box-shadow:0 30px 80px rgba(0,0,0,0.6);
@@ -459,6 +481,23 @@
     border:1px solid var(--line) !important;
     border-radius:22px !important;
     color:var(--text) !important;
+    width:580px !important;
+    max-width:96vw !important;
+  }
+  .swal2-actions{
+    flex-wrap:nowrap !important;
+    gap:8px !important;
+    padding:0 16px !important;
+    width:100% !important;
+    box-sizing:border-box !important;
+  }
+  .swal2-actions button{
+    flex:1 1 0 !important;
+    min-width:0 !important;
+    font-size:10px !important;
+    padding:12px 6px !important;
+    white-space:nowrap !important;
+    letter-spacing:0.03em !important;
   }
   .swal-tech-title{
     font-family:'Space Grotesk', sans-serif !important;
@@ -496,6 +535,9 @@
 </head>
 <body>
 <div id="spotlight"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
 <nav>
   <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">RCTNZITE</div>
@@ -548,16 +590,17 @@
     <div class="label reveal">MIKROTIK CERTIFICATION</div>
     <div class="carousel-wrap">
       <div class="carousel" id="carousel">
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+01" alt="MikroTik Certification 01"><div class="cap">MIKROTIK CERTIFICATION 01</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+02" alt="MikroTik Certification 02"><div class="cap">MIKROTIK CERTIFICATION 02</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+03" alt="MikroTik Certification 03"><div class="cap">MIKROTIK CERTIFICATION 03</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+04" alt="MikroTik Certification 04"><div class="cap">MIKROTIK CERTIFICATION 04</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+05" alt="MikroTik Certification 05"><div class="cap">MIKROTIK CERTIFICATION 05</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+06" alt="MikroTik Certification 06"><div class="cap">MIKROTIK CERTIFICATION 06</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+07" alt="MikroTik Certification 07"><div class="cap">MIKROTIK CERTIFICATION 07</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+08" alt="MikroTik Certification 08"><div class="cap">MIKROTIK CERTIFICATION 08</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+09" alt="MikroTik Certification 09"><div class="cap">MIKROTIK CERTIFICATION 09</div></div>
-        <div class="slide reveal" onclick="openLightbox(this)"><img src="https://via.placeholder.com/794x1123/0f1726/3fd6ff?text=MikroTik+10" alt="MikroTik Certification 10"><div class="cap">MIKROTIK CERTIFICATION 10</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/ACADEMY_TRAINER_page-0001.jpg" alt="ACADEMY TRAINER"></div><div class="cap">ACADEMY TRAINER</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCIPv6E_page-0001.jpg" alt="MTCIPv6E"></div><div class="cap">MTCIPv6E</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCINE_page-0001.jpg" alt="MTCINE"></div><div class="cap">MTCINE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCEWE_page-0001.jpg" alt="MTCEWE"></div><div class="cap">MTCEWE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCSWE_page-0001.jpg" alt="MTCSWE"></div><div class="cap">MTCSWE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCSE_page-0001.jpg" alt="MTCSE"></div><div class="cap">MTCSE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCRE_page-0001.jpg" alt="MTCRE"></div><div class="cap">MTCRE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCTCE_page-0001.jpg" alt="MTCTCE"></div><div class="cap">MTCTCE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCUME_page-0001.jpg" alt="MTCUME"></div><div class="cap">MTCUME</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCWE_page-0001.jpg" alt="MTCWE"></div><div class="cap">MTCWE</div></div>
+        <div class="slide reveal" onclick="openLightbox(this)"><div class="slide-img-wrap"><img src="https://raw.githubusercontent.com/rctnz/rctnzite/refs/heads/main/MTCNA_page-0001.jpg" alt="MTCNA"></div><div class="cap">MTCNA</div></div>
       </div>
       <div class="carousel-nav">
         <div class="carousel-btn" onclick="scrollCarousel(-1)">←</div>
@@ -657,6 +700,32 @@
   }, {threshold:0.12});
 
   document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  /* cert slides: stagger popup in, fade out when section leaves */
+  let _st=[];
+  function triggerSlides(section){
+    const slides=Array.from(section.querySelectorAll('.slide'));
+    _st.forEach(t=>clearTimeout(t));_st=[];
+    slides.forEach((s,i)=>{const t=setTimeout(()=>s.classList.add('in'),i*60);_st.push(t);});
+  }
+  function resetSlides(section){
+    Array.from(section.querySelectorAll('.slide')).forEach(s=>s.classList.remove('in'));
+  }
+  const slideObserver=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting) triggerSlides(entry.target);
+      else resetSlides(entry.target);
+    });
+  },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+  const _cert=document.getElementById('certificate');
+  if(_cert){
+    slideObserver.observe(_cert);
+    /* force-check on load in case section already in viewport */
+    window.addEventListener('load',()=>{
+      const r=_cert.getBoundingClientRect();
+      if(r.top < window.innerHeight && r.bottom > 0) triggerSlides(_cert);
+    });
+  }
 
   /* ── Donate ── */
   document.getElementById('donateBtn').addEventListener('click', function(){
